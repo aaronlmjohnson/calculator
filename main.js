@@ -105,7 +105,7 @@ let negativeSymbol = '@';
 buttonsArr.forEach((button)=>{
   button.addEventListener('click', ()=>{
     if(button.textContent === 'neg'){
-      if(currentNum.indexOf(negativeSymbol) > -1)
+      if(currentNum.indexOf(negativeSymbol) > -1 || currentNum > 0)
         return;
       else{
         currentNum += negativeSymbol // using @ instead of - due to how the calculator handles calculating  - symbols
