@@ -1,13 +1,17 @@
 const buttons = document.querySelector('#buttons');
+const numberButtons = document.querySelector('#number-buttons');
+const signButtons = document.querySelector('#sign-buttons');
+const otherButtons = document.querySelector('#other-buttons');
+
+
 
 for(let i = 0; i < 18; i++){
   let button = document.createElement('div');
   let num = document.createElement('p');
-  //num.textContent = i < 10 ? i : i === 10 ? '=' : i === 11 ? 'clear'
-      // : i === 12 ? '+' : i === 13 ? '-' :i === 14 ? '*' : '/';
+
   switch(true){
     case (i < 10):
-      num.textContent = i;
+      num.textContent = Math.abs(i-9);
       button.classList.add('number');
       break;
     case (i === 10):
@@ -41,14 +45,23 @@ for(let i = 0; i < 18; i++){
     case (i === 17):
       num.textContent = 'neg';
       button.setAttribute('id', 'negative');
-  }    
-
+  }   
   button.classList.add('button');
-  button.append(num);
-  buttons.append(button);
-  
+  button.append(num); 
+
+  if(i < 10 || i === 17 || i === 16)
+    numberButtons.append(button);
+  else if(i >= 10  &&  i < 14)
+    signButtons.append(button);
+  else if(i >= 14 && i < 16){
+    otherButtons.append(button);
+    console.log('hi');
+  }
+
 }
 const buttonsArr = [...document.querySelectorAll('.button')];
+console.log(buttonsArr);
+
 const myMath = {};
 
 myMath.add = (a, b) => Number(a) + Number(b);
