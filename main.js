@@ -89,11 +89,16 @@ myMath.operate = (operator, a, b) =>  {
     return myMath.subtract(a,b);
 
 };
-let displayToScreen = (content)=>{screenValue.textContent = content;}
+let displayToScreen = (content)=>{
+  screenValue.textContent = content;
+  if(screenValue.offsetWidth >= screen.offsetWidth)
+    console.log(screenValue.offsetWidth);
+}
 let clearScreen = ()=>{screenValue.textContent = '';}
 
 const equals = document.querySelector('#operate');
 const screenValue = document.querySelector('#screenValue');
+const screen = document.querySelector('#screen');
 let currentNum = '';
 let currentSign = '';
 let signIndex = '';
