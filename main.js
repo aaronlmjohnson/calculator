@@ -1,8 +1,11 @@
+
 const buttons = document.querySelector('#buttons');
+const styles = window.getComputedStyle;
 const numberButtons = document.querySelector('#number-buttons');
 const signButtons = document.querySelector('#sign-buttons');
 const otherButtons = document.querySelector('#other-buttons');
 const NUMBER_OF_BUTTONS = 19;
+const MAX_SCREEN_CHARS = 13;
 
 
 for(let i = 0; i < NUMBER_OF_BUTTONS; i++){
@@ -77,7 +80,11 @@ myMath.clear = ()=>{
   currentNum = '';
   currentSign = '';
   signIndex = '';
+  screenOffset = 0;
+  screenValue.style.right = `0px`;
+  
 }
+
 myMath.operate = (operator, a, b) =>  {
   if(operator === '/')
     return myMath.divide(a,b);
@@ -89,16 +96,47 @@ myMath.operate = (operator, a, b) =>  {
     return myMath.subtract(a,b);
 
 };
-let displayToScreen = (content)=>{
+//TODO: deal with overflow of really large numbers or really small numbers
+let displayToScreen = (content, pressedBackspace, pressedEquals)=>{
+  let buffer = 18 
+  if(typeof pressedBackspace === "undefined")
+    pressedBackspace = false;
+  if(typeof pressedEquals === "undefined")
+    pressedEquals = false;
+  
+  if(screenOffset === 1 && screenValue.offsetWidth < screen.offsetWidth){ // need to reset the offset since the screen value is less than the display at this point
+    screenOffset = 0;
+    screenValue.style.right = `${screenOffset * buffer}px`;
+  }
   screenValue.textContent = content;
-  if(screenValue.offsetWidth >= screen.offsetWidth)
-    console.log(screenValue.offsetWidth);
+  if(pressedEquals){
+    if(content > (10 ** MAX_SCREEN_CHARS) || content < -1 * (10 ** MAX_SCREEN_CHARS)){
+      screenValue.textContent = content.toExponential(6);
+    }
+      //screenValue.textContent = content.toExponential(6);
+    screenOffset = 0;
+    screenValue.style.right = `${buffer * screenOffset}px`;
+  }else if(screenValue.offsetWidth > screen.offsetWidth){
+    if(!pressedBackspace){
+      screenOffset++;
+      screenValue.style.right = `${buffer * screenOffset}px`;
+    } else{
+      if(screenOffset > 0)
+        --screenOffset;
+      screenValue.style.right = `${buffer * screenOffset}px`;
+    }
+  } 
+  
+
 }
 let clearScreen = ()=>{screenValue.textContent = '';}
 
 const equals = document.querySelector('#operate');
 const screenValue = document.querySelector('#screenValue');
+
 const screen = document.querySelector('#screen');
+let screenOffset = 0;
+
 let currentNum = '';
 let currentSign = '';
 let signIndex = '';
@@ -130,7 +168,7 @@ buttonsArr.forEach((button)=>{
         expression.pop();
         expressionStr = expressionStr.slice(0, expressionStr.length - 1);
         currentNum = currentNum.slice(0, currentNum.length - 1);
-        displayToScreen(expressionStr); 
+        displayToScreen(expressionStr, true); 
       }
       return;    
     }
@@ -156,8 +194,9 @@ buttonsArr.forEach((button)=>{
 
         signIndex = expression.indexOf(currentSign);
         expression.splice(signIndex - 1, 3, myMath.operate(currentSign, expression[signIndex - 1], expression[signIndex + 1])); 
+        expression[0] = Math.round(expression[0] * (10 ** MAX_SCREEN_CHARS)) / (10 ** MAX_SCREEN_CHARS);
       }
-      displayToScreen(expression[0]);
+      displayToScreen(expression[0], false, true);
       myMath.clear();
 
     } else if (!!button.textContent.match(signRegex) && !!currentNum){
@@ -176,6 +215,7 @@ buttonsArr.forEach((button)=>{
       displayToScreen(expressionStr);
   })
 })
+
 /*
 check and see if expressionString has a sign or a number
 
@@ -185,3 +225,6 @@ if it's a number check
  single 
 
 */
+
+
+
