@@ -216,15 +216,6 @@ buttonsArr.forEach((button)=>{
   })
 })
 
-/*
-check and see if expressionString has a sign or a number
-
-
-
-if it's a number check
- single 
-
-*/
 
 
 
